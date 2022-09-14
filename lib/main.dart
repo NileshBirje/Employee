@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:employee/EmpPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -20,17 +21,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.indigo,
+        // backgroundColor: Colors.blueGrey,
+
+        applyElevationOverlayColor: true,
+        primarySwatch: Colors.blueGrey,
+        shadowColor: Colors.blueGrey,
+        // brightness: Brightness.light,
       ),
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark,
+      //   primarySwatch: Colors.blueGrey,
+      // ),
       home: MyHomePage(),
     );
   }
@@ -41,21 +42,12 @@ class MyHomePage extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late List<Employees> DisplayList = <Employees>[];
+  late var DisplayList = <Employees>[];
 
   bool showList = true;
   bool network = false;
@@ -73,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getEmployeeList();
   }
 
+  //*CHECK CONNECTIVITY OF WIFI OR MOBILE DATA
   Future<void> _checkConnectivityState() async {
     final ConnectivityResult result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.wifi ||
@@ -96,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      backgroundColor: Colors.blue,
       appBar: AppBar(
+        backgroundColor: Colors.black54,
         leading: Icon(Icons.menu),
         // ignore: prefer_const_literals_to_create_immutables
         actions: [
@@ -106,38 +99,49 @@ class _MyHomePageState extends State<MyHomePage> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return Container(
-                        child: AlertDialog(
-                            title: Center(
-                                child: Text(
-                              'Instructions',
-                              textScaleFactor: 1,
-                            )),
-                            content: Container(
-                              height: 100,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  // ignore: prefer_const_literals_to_create_immutables
-                                  children: [
-                                    Text(
-                                      "Use the search function to find specific data",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(height: 30,),
-                                    Text(
-                                      "Tap on the card to view their data",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  ],
+                    return AlertDialog(
+                        title: Center(
+                            child: Text(
+                          'Instructions',
+                          textScaleFactor: 1,
+                        )),
+                        content: Container(
+                          color: Colors.white,
+                          height: 170,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              // ignore: prefer_const_literals_to_create_immutables
+                              children: [
+                                Text(
+                                  "Use the search function to find specific Employee",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              ),
-                            )));
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Text(
+                                  "Tap on the card to view their data",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Text(
+                                  "Long Press on the card to view their data in a dialog view",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ));
                   });
             },
             icon: Icon(Icons.help),
@@ -148,185 +152,310 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("IDZ Digital"),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Stack(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          child: Container(
+            decoration: BoxDecoration(
+                // ignore: prefer_const_literals_to_create_immutables
+                gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(246, 39, 79, 105),
+                Color.fromARGB(244, 105, 38, 92),
+                Color.fromARGB(220, 238, 49, 143),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Positioned(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              onChanged: (value) async {
-                                setState(() {
-                                  _search = value;
-                                });
-                              },
-                              cursorColor: Colors.black,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.go,
-                              decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 15),
-                                  hintText: "Search"),
-                            ),
+                //*SEARCH BAR TO SEARCH LIST
+                Stack(
+                  children: [
+                    Positioned(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  onChanged: (value) async {
+                                    setState(() {
+                                      _search = value;
+                                    });
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.go,
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(horizontal: 15),
+                                      hintText: "Search"),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "List of Employees",
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                //*MAIN BODY
+                Expanded(
+                  child: FutureBuilder(
+                    future: getEmployeeList(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.length > 0) {
+                          return ListView.builder(
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onLongPress: (() {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.black45,
+                                              ),
+                                              child: AlertDialog(
+                                                  title: Center(
+                                                      child: Text(
+                                                    'Employee Details',
+                                                    textScaleFactor: 1,
+                                                  )),
+                                                  content: SizedBox(
+                                                    height: 130,
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        // ignore: prefer_const_literals_to_create_immutables
+                                                        children: [
+                                                          Text(
+                                                            // "Use the search function to find specific data",
+                                                            snapshot.data[index]
+                                                                    .name +
+                                                                ', ' +
+                                                                snapshot
+                                                                    .data[index]
+                                                                    .age
+                                                                    .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Text(
+                                                            snapshot.data[index]
+                                                                .salary
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          ElevatedButton(
+                                                            onPressed:
+                                                                () async {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                                enableFeedback:
+                                                                    true,
+                                                                fixedSize: Size(
+                                                                    20, 20),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                primary: Colors
+                                                                    .cyan),
+                                                            child: Text(
+                                                              "OK",
+                                                              textScaleFactor:
+                                                                  1,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 15,
+                                                                fontFamily:
+                                                                    'Inter',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )));
+                                        });
+                                  }),
+                                  onTap: (() {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: ((context) => EmpPage(
+                                                snapshot.data[index]))));
+                                  }),
+                                  child: Card(
+                                    color: Colors.white,
+                                    margin: EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    shadowColor: Colors.blueGrey,
+                                    elevation: 30,
+                                    child: Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          // ignore: prefer_const_literals_to_create_immutables
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(Icons.person),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    "Name ::",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  // DisplayList[index].name.toString(),
+                                                  snapshot.data[index].name
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              // ignore: prefer_const_literals_to_create_immutables
+                                              children: [
+                                                Icon(Icons.numbers_rounded),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    "Age ::",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  snapshot.data[index].age
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              // ignore: prefer_const_literals_to_create_immutables
+                                              children: [
+                                                Icon(Icons.money_rounded),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    "Salary ::",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  snapshot.data[index].salary
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        )),
+                                  ),
+                                );
+                              });
+                        } else {
+                          return const Center(
+                            child: Text("Employee does not exist"),
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text(
+                          "Something Went Wrong: ${snapshot.error}",
+                          textScaleFactor: 1,
+                        );
+                      } else {
+                        return Center(child: Container());
+                      }
+                    },
                   ),
                 ),
               ],
             ),
-            InkWell(
-              child: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 28.0),
-                  child: Text(
-                    "List of Employees",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              onTap: () {
-                setState(() {
-                  showList = !showList;
-                });
-              },
-            ),
-            // if (showList == true)
-            Expanded(
-              child: FutureBuilder(
-                future: getEmployeeList(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.length > 0) {
-                      return ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              margin:
-                                  EdgeInsets.only(top: 10, left: 10, right: 10),
-                              shadowColor: Colors.blueGrey,
-                              elevation: 30,
-                              child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    // ignore: prefer_const_literals_to_create_immutables
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.person),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Name ::",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Text(
-                                            // DisplayList[index].name.toString(),
-                                            snapshot.data[index].name
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        // ignore: prefer_const_literals_to_create_immutables
-                                        children: [
-                                          Icon(Icons.numbers_rounded),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Age ::",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Text(
-                                            snapshot.data[index].age.toString(),
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        // ignore: prefer_const_literals_to_create_immutables
-                                        children: [
-                                          Icon(Icons.money_rounded),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Salary ::",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Text(
-                                            snapshot.data[index].salary
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                            );
-                          });
-                    } else {
-                      return const Center(
-                        child: Text("No data found !"),
-                      );
-                    }
-                  } else if (snapshot.hasError) {
-                    return Text(
-                      "Something Went Wrong: " + snapshot.error.toString(),
-                      textScaleFactor: 1,
-                    );
-                  } else {
-                    return Center(child: Container());
-                  }
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
+  //*FUCNTION TO CALL JSON LINK
   Future getEmployeeList() async {
     try {
+      //*STORE DATA AFTER BEING OFFLINE
       SharedPreferences preferences = await SharedPreferences.getInstance();
       dynamic json;
       if (network == true) {
@@ -348,7 +477,9 @@ class _MyHomePageState extends State<MyHomePage> {
       //     DisplayList.addAll(data);
       //   });
       // }
-      return _search.isNotEmpty && _search.length > 0
+
+      //*SEARCH FUNCTON HERE
+      return _search.isNotEmpty
           ? data
               .where((element) =>
                   element.name!.toLowerCase().contains(_search.toLowerCase()))

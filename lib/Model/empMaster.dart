@@ -14,10 +14,10 @@ class Employees {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['age'] = this.age;
-    data['salary'] = this.salary;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['name'] = name;
+    data['age'] = age;
+    data['salary'] = salary;
     return data;
   }
 }
